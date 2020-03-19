@@ -1,0 +1,67 @@
+OpenCore配置教程
+
+
+
+   本教程为联想Air 14 i5版为基础的教程，此教程为初级教程，如有不足之处还望给与指正，谢谢。Opencore以下简称OC
+一．	准备工具
+1.	OpenCore PKG 安装包 AppleSupport EFI驱动包
+2.	Opnecore Configurator 配置工具（简称OCC）
+3.	OC – little 宪武大神的补丁包
+4.	Hackintool 补丁工具
+5.	Xcode 官方推荐配置工具
+6.	ProperTree 跨平台工具
+7.	Maciasl APCI 编译工具
+备注：2.5.6三个工具个人推荐图形工具简单明了，当然你有更深的造匿能力自己可自行选择。
+二．	电脑配置
+1.	CPU            Core Intel Core i5 8250
+2.	显卡           Intel HD Graphics 620
+3.	无线网卡       BCM94350(DW1820A) 
+4.	声卡           Family HD Audio Controller
+5.	触控板         I2C HD  APCI中断
+6.	蓝牙           BCM2045A0
+三．	配置教程（通用教程6代以后的Cpu）
+1.	在桌面新建文件1夹命名为 OpenCore –EFI 文件夹2 命名Clover-EFI
+2.	利用opencore configurator 挂在EFI分区 复制到Clover-EFI
+3.	打开下载好OC安装包复制EFI文件夹到OpenCore –EFI里面并且打开Docs文件夹复制Sample.plist文件 到OpenCore –EFI →EFI →OC下重命名为config 
+4.	打开Clover-EFI → EFI→kext复制里面的驱动文件到OpenCore –EFI →EFI →OC→kext里面
+5.	用OCC打开OpenCore –EFI →EFI →OC → config 会得到如图所示
+ 
+把里面的每一项都给删除保留SSDT-EC这一项即可（MacOS 10.15 需要新建一个仿冒EC，由于10.15 的升级改变了EC控制器，所以需要重新建一个）打开其他的项目都给里面的补丁都给删除了，我们需要一个每个项目里空白的来配置。 
+选择Booter 启动设置只勾选必须选的选项
+如图所示
+ 
+DeviceProperties设备设置复制Clover里面的即可 设备设置即可当然也可以先留空白进入系统后再完善
+
+kernel 内核设置
+ 
+lilu.kext   为高级驱动其他驱动都是为lilu的驱的插件的的二项驱动VirtualSMC.kext 先加载这个驱动再加载这个驱动的插件
+由于i5 8250 CPU的特性这里需要添加 CPUFriend.kext  CPUFriendDataProvider.kext这两个驱动才可进入系统 不然会报ACPI的错误的 ，无法进入系统。
+
+Misc这项
+ 
+讲以下这里security这里我们选择 Vault 这项optional这里是关于磁盘加密的 防止OC在开机时无法进入引导界面远景里的很多配置文件这项没修改导致开机引导错误
+
+其他的暂且不修改后面会有详细教程当然我们也可一次性配置完。
+NVRAM这项
+这里说一下哈 由于本人的笔记本需要添加npci=0x2000才可以进入系统所以说我们需要添加这个启动参数
+如图所示
+ 
+PlatformInfo机型设置
+根据自己的机型选择适用于自己的机型 我这里选择的是MacBookPro15,4
+这里不做过得介绍了 跟Clover一样 如果自己的AppleID可以登录Face Time. Imessage的话这里可以复制自己的三码。
+UEFI 设置
+ 
+ 
+然后点击保存关掉OCC即可
+6.	打开下载好的OC安装包Docs → AcpiSamples →SSDT – EC.dal 编译成aml文件复制到OpenCore –EFI →EFI →OC→ACPI文件夹里
+
+7.	打开下载好的AppleSupport EFI驱动包里面的文件Drivers复制里面的EFI驱动到OpenCore –EFI →EFI →OC→Drivers
+会得到如图的文件夹
+ 
+整个OC到目前已经基础配置完善了
+8.	复制opencore -efi 文件夹里的EFI到U盘里的EFI中去适用U盘引导安装盘看一下是否可以进入安装盘。
+正常情况下是可以进入
+9.	ACPI热补丁制作
+打开Clover-EFI → EFI →ACPA→pached 观察所需要的ACPI热补丁
+打开下载好的OC补丁包根据ACPI的教程来制作完整的所需要的热补丁。
+Clover的APCI补丁与OC的不通用。
